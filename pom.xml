@@ -10,9 +10,9 @@
 	</parent>
 	<groupId>io.symplesims.spring.aws</groupId>
 	<artifactId>spring-boot-starter-aws-parameter-store</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<name>spring-boot-starter-aws-parameter-store</name>
-	<description>Demo project for Spring Boot</description>
+	<description>spring-boot-starter-aws-parameter-store</description>
 	<properties>
 		<java.version>17</java.version>
 		<java.version>17</java.version>
@@ -43,31 +43,5 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<artifactId>maven-dependency-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>copy</id>
-						<phase>package</phase>
-						<goals>
-							<goal>copy-dependencies</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>true</overWriteSnapshots>
-							<excludeTransitive>true</excludeTransitive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
 
 </project>
