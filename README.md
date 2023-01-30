@@ -134,8 +134,8 @@ public class SimpleComponent {
 
 ### spring-cloud-aws-starter-parameter-store
 
-AWS SSM 파라미터 값을 참조하는 기능은 [spring-cloud](https://spring.io/projects/spring-cloud) 프로젝트의 [spring-cloud-aws-starter-parameter-store](https://github.com/awspring/spring-cloud-aws/tree/main/spring-cloud-aws-starters/spring-cloud-aws-starter-parameter-store) 모듈에서 이미 훌륭하고 안정적으로 구현해 놓았습니다.  
-해당 기능은 [PropertySource](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.external-config) 에 Parameter Value 값을 주입하고 @Value 어노테이션으로 액세스 합니다. 
+AWS SSM 파라미터 값을 참조하는 기능은 [spring-cloud](https://spring.io/projects/spring-cloud) 프로젝트의 [spring-cloud-aws-starter-parameter-store](https://github.com/awspring/spring-cloud-aws/tree/main/spring-cloud-aws-starters/spring-cloud-aws-starter-parameter-store) 모듈에서 이미 훌륭하고 안정적으로 구현해 놓았습니다.    
+참고로, 해당 기능은 [PropertySource](https://docs.spring.io/spring-boot/docs/current/reference/htmlsingle/#features.external-config) 에 Parameter Value 값을 주입하고 @Value 어노테이션으로 액세스 합니다. 
 
 
 

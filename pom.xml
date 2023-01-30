@@ -77,10 +77,9 @@
     </developers>
 
     <scm>
-        <connection>scm:git:git://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</connection>
-        <developerConnection>scm:git:ssh://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git
-        </developerConnection>
-        <url>http://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</url>
+        <connection>scm:git:https://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</connection>
+        <developerConnection>scm:git:ssh://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</developerConnection>
+        <url>https://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</url>
     </scm>
 
 </project>
