@@ -5,6 +5,7 @@ import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.ssm.SsmClient;
@@ -22,17 +23,13 @@ public class AwsSsmParameterStoreAutoConfiguration {
         if (properties.getRegion() != null) {
             builder.region(Region.of(properties.getRegion()));
         }
-        if (properties.getProfile() != null) {
+        final ProviderType providerType = properties.getProviderType();
+        if (properties.getProfile() != null || providerType == ProviderType.PROFILE) {
             builder.credentialsProvider(ProfileCredentialsProvider.create(properties.getProfile()));
         }
-        /*
-        final ProviderType providerType = properties.getProviderType();
-        switch (providerType) {
-            case PROFILE -> builder.credentialsProvider(ProfileCredentialsProvider.create(properties.getProfile()));
-            case ENVIRONMENT -> builder.credentialsProvider(EnvironmentVariableCredentialsProvider.create());
+        if (providerType == ProviderType.ENVIRONMENT) {
+            builder.credentialsProvider(EnvironmentVariableCredentialsProvider.create());
         }
-        */
-
         return builder.build();
     }
 

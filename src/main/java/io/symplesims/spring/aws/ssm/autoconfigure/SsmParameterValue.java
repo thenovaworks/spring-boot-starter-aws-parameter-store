@@ -7,5 +7,11 @@ import java.lang.annotation.*;
 @Documented
 public @interface SsmParameterValue {
     String value();
+
     ValueType type() default ValueType.STRING;
+
+    /**
+     * Whether attribute name of Map is fullname or not. It can only work true if ValueType.MAP.
+     */
+    boolean fullname() default false;
 }

@@ -1,14 +1,15 @@
 package io.symplesims.spring.aws.ssm.autoconfigure;
 
-import org.springframework.beans.factory.config.DependencyDescriptor;
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
-import org.springframework.core.MethodParameter;
-import org.springframework.core.annotation.AnnotatedElementUtils;
-import org.springframework.core.annotation.AnnotationAttributes;
 import software.amazon.awssdk.services.ssm.SsmClient;
-import software.amazon.awssdk.services.ssm.model.*;
+import software.amazon.awssdk.services.ssm.model.GetParameterRequest;
+import software.amazon.awssdk.services.ssm.model.GetParameterResponse;
+import software.amazon.awssdk.services.ssm.model.GetParametersByPathRequest;
+import software.amazon.awssdk.services.ssm.model.Parameter;
 
 import java.lang.annotation.Annotation;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collector;
@@ -27,13 +28,32 @@ public class SsmParameterStoreValueResolver implements AutowireCandidateResolver
         this.ssmClient = ssmClient;
     }
 
-    private Collector<Parameter, ?, Map<String, String>> parametersToMap(String parametersPath) {
-        return toMap(p -> p.name().substring(parametersPath.length() + 1), Parameter::value);
+    private Collector<Parameter, ?, Map<String, String>> parametersToMap(final String path, final boolean fullname) {
+        if (fullname) {
+            return toMap(p -> p.name(), Parameter::value);
+        }
+        return toMap(p -> p.name().substring(path.length() + 1), Parameter::value);
     }
 
-    private Map<String, String> getPathParameters(final String path) {
+    private Map<String, String> getParameter(final String path, final boolean fullname) {
+        final String value = getParameter(path);
+        final Map<String, String> result = new HashMap<>();
+        if (fullname) {
+            result.put(path, value);
+        } else {
+            int pos = path.lastIndexOf("/") + 1;
+            result.put(path.substring(pos), value);
+        }
+        return result;
+    }
+
+    private Map<String, String> getPathParameters(final String path, final boolean fullname) {
         final GetParametersByPathRequest request = GetParametersByPathRequest.builder().path(path).withDecryption(true).build();
-        return ssmClient.getParametersByPath(request).parameters().stream().collect(parametersToMap(path));
+        final List<Parameter> values = ssmClient.getParametersByPath(request).parameters();
+        if (values == null || values.size() < 1) {
+            return getParameter(path, fullname);
+        }
+        return ssmClient.getParametersByPath(request).parameters().stream().collect(parametersToMap(path, fullname));
     }
 
     private String getParameter(final String name) {
@@ -42,56 +62,29 @@ public class SsmParameterStoreValueResolver implements AutowireCandidateResolver
         return response.parameter().value();
     }
 
-    public Object getProperty(String parameter) throws SsmException {
-        if (parameter.startsWith("/")) {
-            return getParameter(parameter);
-        } else if (parameter.startsWith("L/")) {
-            return getPathParameters(parameter.substring(1));
-        }
-        return null;
-    }
+    public Object getValue(final SsmParameterValue parameterValue) {
+        final String name = parameterValue.value();
+        final ValueType type = parameterValue.type();
+        final boolean fullname = parameterValue.fullname();
 
-    public Object getSuggestedValue(DependencyDescriptor descriptor) {
-        Object value = findValue(descriptor.getAnnotations());
-        if (value == null) {
-            MethodParameter methodParam = descriptor.getMethodParameter();
-            if (methodParam != null) {
-                value = findValue(methodParam.getMethodAnnotations());
-            }
-        }
-        return value;
-    }
-
-    protected Object findValue(Annotation[] annotationsToSearch) {
-        if (annotationsToSearch.length > 0) {
-            AnnotationAttributes attr = AnnotatedElementUtils.getMergedAnnotationAttributes(AnnotatedElementUtils.forAnnotations(annotationsToSearch), this.valueAnnotationType);
-            if (attr != null) {
-                return extractValue(attr);
-            }
-        }
-        return null;
-    }
-
-    private Object extractValue(AnnotationAttributes attr) {
-        final ValueType type = (ValueType) attr.get("type");
-        final String key = (String) attr.get("value");
-
-        if (cache.containsValue(key)) {
-            return cache.get(key);
+        final String cacheKey = name + "." + type + "." + fullname;
+        if (cache.containsValue(cacheKey)) {
+            return cache.get(cacheKey);
         }
         synchronized (this.cache) {
-            if (cache.get(key) != null) {
-                return cache.get(key);
+            if (cache.get(cacheKey) != null) {
+                return cache.get(cacheKey);
             }
             switch (type) {
                 case STRING -> {
-                    final Object value = getParameter(key);
-                    cache.put(key, value);
+                    final Object value = getParameter(name);
+                    assert value != null;
+                    cache.put(cacheKey, value);
                     return value;
                 }
                 case MAP -> {
-                    final Object value = getPathParameters(key);
-                    cache.put(key, value);
+                    final Object value = getPathParameters(name, fullname);
+                    cache.put(cacheKey, value);
                     return value;
                 }
             }
