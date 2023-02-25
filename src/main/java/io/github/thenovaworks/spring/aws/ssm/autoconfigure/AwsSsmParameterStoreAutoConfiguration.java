@@ -1,10 +1,11 @@
-package io.symplesims.spring.aws.ssm.autoconfigure;
+package io.github.thenovaworks.spring.aws.ssm.autoconfigure;
 
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
@@ -24,11 +25,11 @@ public class AwsSsmParameterStoreAutoConfiguration {
             builder.region(Region.of(properties.getRegion()));
         }
         final ProviderType providerType = properties.getProviderType();
-        if (properties.getProfile() != null || providerType == ProviderType.PROFILE) {
-            builder.credentialsProvider(ProfileCredentialsProvider.create(properties.getProfile()));
-        }
-        if (providerType == ProviderType.ENVIRONMENT) {
-            builder.credentialsProvider(EnvironmentVariableCredentialsProvider.create());
+        switch (providerType) {
+            case PROFILE -> builder.credentialsProvider(ProfileCredentialsProvider.create(properties.getProfile()));
+            case ENVIRONMENT -> builder.credentialsProvider(EnvironmentVariableCredentialsProvider.create());
+            default -> builder.credentialsProvider(DefaultCredentialsProvider.create());
+
         }
         return builder.build();
     }

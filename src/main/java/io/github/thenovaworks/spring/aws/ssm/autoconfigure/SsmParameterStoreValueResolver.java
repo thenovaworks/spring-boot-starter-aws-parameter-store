@@ -1,4 +1,4 @@
-package io.symplesims.spring.aws.ssm.autoconfigure;
+package io.github.thenovaworks.spring.aws.ssm.autoconfigure;
 
 import org.springframework.beans.factory.support.AutowireCandidateResolver;
 import software.amazon.awssdk.services.ssm.SsmClient;

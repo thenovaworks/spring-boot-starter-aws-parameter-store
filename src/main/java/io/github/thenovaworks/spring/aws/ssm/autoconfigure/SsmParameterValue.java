@@ -1,8 +1,8 @@
-package io.symplesims.spring.aws.ssm.autoconfigure;
+package io.github.thenovaworks.spring.aws.ssm.autoconfigure;
 
 import java.lang.annotation.*;
 
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.ANNOTATION_TYPE})
+@Target({ElementType.FIELD, ElementType.METHOD})
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 public @interface SsmParameterValue {

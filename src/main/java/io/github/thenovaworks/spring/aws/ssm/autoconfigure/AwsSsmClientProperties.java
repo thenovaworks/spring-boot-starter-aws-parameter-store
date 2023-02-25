@@ -1,4 +1,4 @@
-package io.symplesims.spring.aws.ssm.autoconfigure;
+package io.github.thenovaworks.spring.aws.ssm.autoconfigure;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 

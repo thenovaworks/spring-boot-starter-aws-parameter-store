@@ -11,25 +11,25 @@ spring-boot-starter-aws-parameter-store 프로젝트는 AWS SSM Parameter Store 
 
 <br>
 
-- `/ssm/parameters/rds/symple/password` 경로의 값을 바인딩 예시
+- `/config/secret/rds/symple/password` 경로의 값을 바인딩 예시
 
 ```
-    @SsmParameterValue("/ssm/parameters/rds/symple/username")
+    @SsmParameterValue("/config/secret/rds/symple/username")
     private String username;
 ```
 
-이 결과로, Bean 클래스의 username 속성은 /ssm/parameters/rds/symple/username 경로에 지정된 보안 문자열 (예: "admin")값이 바인딩 될 수 있습니다. 
+이 결과로, Bean 클래스의 username 속성은 /config/secret/rds/symple/username 경로에 지정된 보안 문자열 (예: "admin")값이 바인딩 될 수 있습니다. 
 
 
 <br>
 
 
-- `/ssm/parameters/rds/symple` 경로에 포함된 모든 값들을 Map 으로 바인딩 예시
+- `/config/secret/rds/symple` 경로에 포함된 모든 값들을 Map 으로 바인딩 예시
 ```
-    @SsmParameterValue(value = "/ssm/parameters/rds/symple", type = ValueType.MAP)
+    @SsmParameterValue(value = "/config/secret/rds/symple", type = ValueType.MAP)
     private Map<String, String> info;
 ```
-이 결과로, Bean 클래스의 info 속성은 /ssm/parameters/rds/symple 경로에 포함된 모든 보안 속성 (예: {database=portal, password=encrypted_secured_value, username=symplesims} )이 Map 객체로 바인딩 될 수 있습니다.
+이 결과로, Bean 클래스의 info 속성은 /config/secret/rds/symple 경로에 포함된 모든 보안 속성 (예: {database=portal, password=encrypted_secured_value, username=symplesims} )이 Map 객체로 바인딩 될 수 있습니다.
 
 
 <br>
@@ -44,9 +44,9 @@ AWS SSM Parameter Store 를 액세스 하려면 Spring Boot 애플리케이션�
 ```
     <dependencies>
         <dependency>
-          <groupId>io.symplesims.spring.aws</groupId>
+          <groupId>io.github.thenovaworks</groupId>
           <artifactId>spring-boot-starter-aws-parameter-store</artifactId>
-          <version>1.0.0</version>
+          <version>0.9.5</version>
         </dependency>
     </dependencies>
 ```
@@ -55,7 +55,7 @@ AWS SSM Parameter Store 를 액세스 하려면 Spring Boot 애플리케이션�
 
 ```
 dependencies {
-	implementation 'io.symplesims.spring.aws:spring-boot-starter-aws-parameter-store:1.0.0'
+	implementation 'io.github.thenovaworks:spring-boot-starter-aws-parameter-store:0.9.5'
 }
 ```
 
@@ -87,6 +87,8 @@ spring:
 AWS Profile 에 관련된 설정은 AWS [Configuration and credential file settings](https://docs.aws.amazon.com/cli/latest/userguide/cli-configure-files.html) 가이드를 참고 합니다.  
 
 
+
+- AWS Profile 을 참조하여 보안 문자열을 액세스 합니다.
 ```
 spring:
   cloud:
@@ -96,33 +98,37 @@ spring:
         profile: <your_profile>
 ```
 
-### Spring Bean
 
-아래 `SimpleComponent` 와 같이 쉽게 사용할 수 있습니다.    
+- AWS Environments 환경 변수를 참조하여 보안 문자열을 액세스 합니다.
+
+```
+spring:
+  cloud:
+    aws:
+      ssm:
+        provider-type: environment
 ```
 
-import io.symplesims.spring.aws.ssm.autoconfigure.SsmParameterValue;
-import io.symplesims.spring.aws.ssm.autoconfigure.ValueType;
+### Spring Bean
+
+아래 `HelloSpringBean` 을 참고하여 쉽게 사용할 수 있습니다.    
+```
+
+import io.github.thenovaworks.spring.aws.ssm.autoconfigure.SsmParameterValue;
+import io.github.thenovaworks.spring.aws.ssm.autoconfigure.ValueType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
 @Component
-public class SimpleComponent {
+public class HelloSpringBean {
 
-    @SsmParameterValue("/ssm/parameters/rds/symple/username")
+    @SsmParameterValue("/dev/rds/cms/username")
     private String username;
 
-    @SsmParameterValue(value = "/ssm/parameters/rds/symple", type = ValueType.MAP)
+    @SsmParameterValue(value = "/dev/rds/cms", type = ValueType.MAP)
     private Map<String, String> info;
 
-    public String getUsername() {
-        return username;
-    }
-
-    public Map<String, String> getInfo() {
-        return info;
-    }
 }
 
 ```

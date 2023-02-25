@@ -1,0 +1,18 @@
+debug: false
+
+spring:
+  application:
+    name: my-spring-app
+
+---
+spring:
+  config:
+    activate:
+      on-profile: local
+  cloud:
+    aws:
+      ssm:
+        region: ap-southeast-1
+        provider-type: profile
+        profile: sea
+

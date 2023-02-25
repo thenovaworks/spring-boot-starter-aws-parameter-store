@@ -1,4 +1,4 @@
-package io.symplesims.spring.aws.ssm.autoconfigure;
+package io.github.thenovaworks.spring.aws.ssm.autoconfigure;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
@@ -6,10 +6,14 @@ import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.util.ReflectionUtils;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * org.springframework.beans.factory.config.BeanFactoryPostProcessor
+ */
 public class AwsSsmParameterValueBeanPostProcessor implements BeanPostProcessor {
 
     private final ConfigurableListableBeanFactory configurableBeanFactory;
@@ -61,6 +65,19 @@ public class AwsSsmParameterValueBeanPostProcessor implements BeanPostProcessor 
                     if (value != null) {
                         ReflectionUtils.makeAccessible(field);
                         field.set(bean, value);
+                    }
+                }
+            });
+            ReflectionUtils.doWithLocalMethods(bean.getClass(), m -> {
+                SsmParameterValue ssmParameterValue = m.getAnnotation(SsmParameterValue.class);
+                if (ssmParameterValue != null) {
+                    final Object value = candidateResolver.getValue(ssmParameterValue);
+                    if (value != null) {
+                        try {
+                            m.invoke(bean, new Object[]{value});
+                        } catch (InvocationTargetException e) {
+                            throw new RuntimeException(e);
+                        }
                     }
                 }
             });

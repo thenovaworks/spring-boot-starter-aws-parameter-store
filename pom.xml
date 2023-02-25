@@ -5,20 +5,31 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.0</version>
+        <version>3.0.2</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>io.github.simplyexample.spring.aws</groupId>
+    <groupId>io.github.thenovaworks</groupId>
     <artifactId>spring-boot-starter-aws-parameter-store</artifactId>
-    <version>1.0.0</version>
+    <version>0.9.5</version>
     <name>${project.groupId}:${project.artifactId}</name>
     <description>spring-boot-starter-aws-parameter-store</description>
 
     <properties>
-        <awssdk.version>2.19.18</awssdk.version>
         <java.version>17</java.version>
         <java.version>17</java.version>
+        <awssdk.version>2.20.11</awssdk.version>
     </properties>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/content/repositories/snapshots</url>
+        </snapshotRepository>
+        <repository>
+            <id>ossrh</id>
+            <url>https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
     <dependencyManagement>
         <dependencies>
@@ -71,16 +82,13 @@
         <developer>
             <name>SeonBo Shim</name>
             <email>symplesims@gmail.com</email>
-            <organization>BespinGlobal</organization>
-            <organizationUrl>http://www.bespinglobal.com</organizationUrl>
         </developer>
     </developers>
 
     <scm>
-        <connection>scm:git:https://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</connection>
-        <developerConnection>scm:git:ssh://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git
-        </developerConnection>
-        <url>https://github.com/chiwoo-samples/spring-boot-starter-aws-parameter-store.git</url>
+        <connection>scm:git:https://github.com/thenovaworks/spring-boot-starter-aws-parameter-store.git</connection>
+        <developerConnection>scm:git:ssh://github.com/thenovaworks/spring-boot-starter-aws-parameter-store.git</developerConnection>
+        <url>https://github.com/thenovaworks/spring-boot-starter-aws-parameter-store.git</url>
     </scm>
 
     <build>

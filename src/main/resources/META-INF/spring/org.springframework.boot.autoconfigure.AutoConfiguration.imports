@@ -1,1 +1,1 @@
-io.symplesims.spring.aws.ssm.autoconfigure.AwsSsmParameterStoreAutoConfiguration
+io.github.thenovaworks.spring.aws.ssm.autoconfigure.AwsSsmParameterStoreAutoConfiguration
