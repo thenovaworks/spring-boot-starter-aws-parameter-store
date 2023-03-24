@@ -25,7 +25,7 @@ AWS Systems Manager Parameter Store 의 장점은 다음과 같습니다.
 
 <br>
 
-- `/dev/rds/apple/username` 경로의 값을 바인딩 예제 입니다. 
+- `/dev/rds/apple/username` 경로의 값을 String 객체로 바인딩 하는 예제입니다. 
 
 ```
     @SsmParameterValue("/dev/rds/apple/username")
@@ -38,7 +38,7 @@ Bean 클래스의 username 속성은 `/dev/rds/apple/username` SSM Parameter Sto
 <br>
 
 
-- `/dev/rds/apple` 경로에 포함된 모든 값들을 Map 으로 바인딩 예제 입니다. 
+- `/dev/rds/apple` 경로에 포함된 모든 값들을 Map 객체로 바인딩 하는 예제입니다.
 ```
     @SsmParameterValue(value = "/dev/rds/apple", type = ValueType.MAP)
     private Map<String, String> info;
