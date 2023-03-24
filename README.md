@@ -1,35 +1,49 @@
 # spring-boot-starter-aws-parameter-store
 
-spring-boot-starter-aws-parameter-store 프로젝트는 AWS SSM Parameter Store 를 액세스 하는 spring-boot 의 Auto Configuration 구성을 지원 합니다. 
+
+AWS Systems Manager Parameter Store 는 애플리케이션, CLI 툴 등을 위한 구성 정보나 암호화된 문자열과 같은 비밀 데이터를 계층 구조의 중앙화된 방식으로 저정하고 관리합니다. 
+
+spring-boot-starter-aws-parameter-store 프로젝트는 spring-boot 의 Auto Configuration 컴포넌트로 간단한 설정만으로 AWS Systems Manager Parameter Store 에 저장된 구성 정보를 쉽게 참조할 수 있습니다. 
+
+
+AWS Systems Manager Parameter Store 의 장점은 다음과 같습니다. 
+
+- 중앙 집중식 구성 관리: 구성 데이터와 비밀 정보를 중앙에서 관리함으로써, 모든 애플리케이션에서 일관된 설정 값을 사용할 수 있습니다.
+- 보안성: 보안이 필요한 데이터는 KMS (Key Management Service)를 통해 암호화 하여 저장 합니다.
+- 스케일링: 저장된 데이터는 AWS 클라우드 내에서 전역적으로 사용이 가능 합니다.
+- 간단한 API 인터페이스: API 인터페이스를 통해 다양한 클라이언트에서 쉽게 데이터를 읽고 쓸 수 있습니다.
+- 범용성: EC2 인스턴스, Lambda 함수, CodeBuild, CodeDeploy 등의 여러 애플리케이션의 런타임 보안 문자열 및 구성 정보를 쉽게 참조할 수 있습니다.
+
+ 
 
 <br>
 
 ## Usage
 
-이 모듈은 Spring Framework 제공 하는 확장 기능 중 하나인 [BeanPostProcessor](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-extension-bpp) 을 이용 하여,  
+이 모듈은 Spring Framework 제공 하는 확장 기능 중 하나인 [BeanPostProcessor](https://docs.spring.io/spring-framework/docs/current/reference/html/core.html#beans-factory-extension-bpp) 을 이용 하여, 
 `@SsmParameterValue` 어노테이션에 해당하는 속성 값을 Spring Bean 에 자동적으로 주입합니다. 
 
 <br>
 
-- `/config/secret/rds/symple/password` 경로의 값을 바인딩 예시
+- `/dev/rds/apple/username` 경로의 값을 바인딩 예제 입니다. 
 
 ```
-    @SsmParameterValue("/config/secret/rds/symple/username")
+    @SsmParameterValue("/dev/rds/apple/username")
     private String username;
 ```
 
-이 결과로, Bean 클래스의 username 속성은 /config/secret/rds/symple/username 경로에 지정된 보안 문자열 (예: "admin")값이 바인딩 될 수 있습니다. 
+Bean 클래스의 username 속성은 `/dev/rds/apple/username` SSM Parameter Store 경로에 지정된 보안 문자열 값이 설정 됩니다. 
 
 
 <br>
 
 
-- `/config/secret/rds/symple` 경로에 포함된 모든 값들을 Map 으로 바인딩 예시
+- `/dev/rds/apple` 경로에 포함된 모든 값들을 Map 으로 바인딩 예제 입니다. 
 ```
-    @SsmParameterValue(value = "/config/secret/rds/symple", type = ValueType.MAP)
+    @SsmParameterValue(value = "/dev/rds/apple", type = ValueType.MAP)
     private Map<String, String> info;
 ```
-이 결과로, Bean 클래스의 info 속성은 /config/secret/rds/symple 경로에 포함된 모든 보안 속성 (예: {database=portal, password=encrypted_secured_value, username=symplesims} )이 Map 객체로 바인딩 될 수 있습니다.
+Bean 클래스의 info 속성은 `/dev/rds/apple` 경로에 포함된 모든 보안 문자열 값이 Map 객체로 설정 됩니다. (예: {database=apple, password=encrypted_secured_value, username=symplesims} ) 
 
 
 <br>
@@ -46,7 +60,7 @@ AWS SSM Parameter Store 를 액세스 하려면 Spring Boot 애플리케이션�
         <dependency>
           <groupId>io.github.thenovaworks</groupId>
           <artifactId>spring-boot-starter-aws-parameter-store</artifactId>
-          <version>0.9.5</version>
+          <version>1.0.0</version>
         </dependency>
     </dependencies>
 ```
@@ -115,7 +129,6 @@ spring:
 ```
 
 import io.github.thenovaworks.spring.aws.ssm.autoconfigure.SsmParameterValue;
-import io.github.thenovaworks.spring.aws.ssm.autoconfigure.ValueType;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -123,10 +136,10 @@ import java.util.Map;
 @Component
 public class HelloSpringBean {
 
-    @SsmParameterValue("/dev/rds/cms/username")
+    @SsmParameterValue("/dev/rds/apple/username")
     private String username;
 
-    @SsmParameterValue(value = "/dev/rds/cms", type = ValueType.MAP)
+    @SsmParameterValue(value = "/dev/rds/apple")
     private Map<String, String> info;
 
 }

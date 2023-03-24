@@ -1,6 +1,7 @@
 package io.github.thenovaworks.samples.parameterstore;
 
 import io.github.thenovaworks.samples.parameterstore.mybean.HelloSpringBean;
+import io.github.thenovaworks.samples.parameterstore.mybean.WorldSpringBean;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
@@ -41,6 +42,25 @@ class SsmParameterValueTests {
         Assertions.assertNotNull(info);
         log.info("info: {}", info);
     }
+
+
+    @Autowired
+    private WorldSpringBean worldBean;
+
+    @Test
+    public void test_ssm_string_parameter_from_world() {
+        String username = worldBean.getUsername();
+        Assertions.assertNotNull(username);
+        log.info("username: {}", username);
+    }
+
+    @Test
+    public void test_ssm_map_parameters_from_world() {
+        Map<String, String> info = worldBean.getInfo();
+        Assertions.assertNotNull(info);
+        log.info("info: {}", info);
+    }
+
 
 }
 

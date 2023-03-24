@@ -63,8 +63,12 @@ public class SsmParameterStoreValueResolver implements AutowireCandidateResolver
     }
 
     public Object getValue(final SsmParameterValue parameterValue) {
-        final String name = parameterValue.value();
         final ValueType type = parameterValue.type();
+        return getValue(parameterValue, type);
+    }
+
+    public Object getValue(final SsmParameterValue parameterValue, final ValueType type) {
+        final String name = parameterValue.value();
         final boolean fullname = parameterValue.fullname();
 
         final String cacheKey = name + "." + type + "." + fullname;

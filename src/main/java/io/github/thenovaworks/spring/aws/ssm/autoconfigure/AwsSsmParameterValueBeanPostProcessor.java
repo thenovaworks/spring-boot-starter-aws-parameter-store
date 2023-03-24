@@ -61,23 +61,42 @@ public class AwsSsmParameterValueBeanPostProcessor implements BeanPostProcessor 
             ReflectionUtils.doWithLocalFields(bean.getClass(), field -> {
                 SsmParameterValue ssmParameterValue = field.getAnnotation(SsmParameterValue.class);
                 if (ssmParameterValue != null) {
-                    final Object value = candidateResolver.getValue(ssmParameterValue);
+                    final Object value;
+                    if (field.getType().isAssignableFrom(Map.class)) {
+                        value = candidateResolver.getValue(ssmParameterValue, ValueType.MAP);
+                    } else {
+                        value = candidateResolver.getValue(ssmParameterValue);
+                    }
                     if (value != null) {
                         ReflectionUtils.makeAccessible(field);
                         field.set(bean, value);
                     }
                 }
             });
-            ReflectionUtils.doWithLocalMethods(bean.getClass(), m -> {
-                SsmParameterValue ssmParameterValue = m.getAnnotation(SsmParameterValue.class);
+
+            ReflectionUtils.doWithLocalMethods(bean.getClass(), method -> {
+                SsmParameterValue ssmParameterValue = method.getAnnotation(SsmParameterValue.class);
                 if (ssmParameterValue != null) {
-                    final Object value = candidateResolver.getValue(ssmParameterValue);
-                    if (value != null) {
-                        try {
-                            m.invoke(bean, new Object[]{value});
-                        } catch (InvocationTargetException e) {
-                            throw new RuntimeException(e);
+                    if ("void".equalsIgnoreCase(method.getReturnType().getTypeName())) {
+                        if (method.getParameterCount() != 1) {
+                            throw new IllegalArgumentException(String.format("The @SsmParameterValue annotation supports setter methods with only one parameter. '%s.%s'", bean.getClass(), method.getName()));
                         }
+                        final Class<?> parameterType = method.getParameterTypes()[0];
+                        final Object value;
+                        if (parameterType.isAssignableFrom(Map.class)) {
+                            value = candidateResolver.getValue(ssmParameterValue, ValueType.MAP);
+                        } else {
+                            value = candidateResolver.getValue(ssmParameterValue);
+                        }
+                        if (value != null) {
+                            try {
+                                method.invoke(bean, new Object[]{value});
+                            } catch (InvocationTargetException e) {
+                                throw new RuntimeException(e);
+                            }
+                        }
+                    } else {
+                        throw new IllegalArgumentException(String.format("The @SsmParameterValue annotation is only supports setter methods. '%s.%s'", bean.getClass(), method.getName()));
                     }
                 }
             });
